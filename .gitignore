@@ -3,6 +3,10 @@
 # dependencies
 /node_modules
 /.pnp
+
+# lock removido do repo: divergência de resolução entre npm 10 (Railway) e npm 11
+# (local) quebrava o `npm ci`. Sem lock, o Railway usa `npm install`.
+package-lock.json
 .pnp.*
 .yarn/*
 !.yarn/patches
