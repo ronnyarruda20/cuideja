@@ -1,0 +1,133 @@
+// CuidaJá — Fatia 1 (ferramenta interna de concierge)
+// Modelagem espelha o produto final: Profissional, Necessidade, Proposta e
+// Avaliação são as mesmas entidades que a versão pública vai usar.
+//
+// Os campos de "tipo" (categoria, status, período...) são String validados no
+// código (ver src/lib/dominio.ts), fonte única de verdade compartilhada com as
+// telas. Valores monetários são Int em reais. Banco: PostgreSQL.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Profissional de enfermagem ou cuidador. Guarda dado sensível (COREN, telefone).
+model Profissional {
+  id        String   @id @default(cuid())
+  nome      String
+  telefone  String  @unique // WhatsApp — também é o login no autocadastro
+  categoria String // ENFERMEIRO | TECNICO | AUXILIAR | CUIDADOR
+
+  // Verificação de COREN — registrada, não só feita (CUI-12).
+  coren              String?
+  corenVerificado    Boolean   @default(false)
+  corenVerificadoEm  DateTime?
+  corenVerificadoPor String?
+
+  // Atuação
+  especialidades String? // lista separada por vírgula: idoso, pediatria, curativos...
+  cidade         String
+  bairro         String?
+  raioKm         Int?
+
+  // Valores praticados (R$ inteiros)
+  valorDiurno  Int?
+  valorNoturno Int?
+  valor24h     Int?
+  valorMensal  Int?
+
+  disponibilidade String? // texto livre: "noites, fins de semana"
+
+  // Credenciais — só para autocadastro. Operador cria sem senha.
+  senhaHash    String?
+  autocadastro Boolean @default(false)
+
+  // Experiência (entrevista estruturada no onboarding). Comportamento passado,
+  // não opinião — alimenta CUI-18, CUI-20, CUI-32.
+  prazoRecebimentoDias Int?     // dias até receber hoje (dor nº 1 — CUI-32)
+  comoConsegueTrabalho String?  // "grupos de WhatsApp, indicação..."
+  plantoesUltimoMes    Int?
+  jaLevouCalote        Boolean?
+  jaPagouPorLead       Boolean? // sondagem do anti-modelo GetNinjas
+  comissaoAceita       Int?     // % que diria aceitar (declarado, não validado)
+
+  observacoes String?
+  ativo       Boolean @default(true)
+  criadoEm    DateTime @default(now())
+
+  propostas Proposta[]
+}
+
+/// Necessidade publicada por uma família. NÃO guarda diagnóstico (LGPD, CUI-10).
+model Necessidade {
+  id              String @id @default(cuid())
+  familiaNome     String
+  familiaTelefone String
+
+  pacienteRelacao String? // "mãe", "pai", "cônjuge", "para mim"...
+  cidade          String
+  bairro          String?
+
+  // Tarefas, não diagnóstico. Lista separada por vírgula.
+  tarefas String? // companhia, higiene, medicacao, curativos, pos-operatorio, acompanhante-hospital
+
+  periodo    String? // DIURNO | NOTURNO | 24H | HORAS
+  dataInicio DateTime?
+  duracao    String? // UM_DIA | ALGUNS_DIAS | CONTINUO
+  urgencia   String? // HOJE | SEMANA | DUAS_SEMANAS | PLANEJANDO
+
+  orcamentoEsperado Int? // R$ inteiros
+  canal             String? // como a família chegou (CUI-19): indicação, instagram, clínica...
+
+  // Hipótese CUI-32: a família topa pagar antes do plantão?
+  pagaAntecipado Boolean?
+
+  status      String   @default("ABERTA") // ABERTA | EM_MATCH | PREENCHIDA | CANCELADA
+  observacoes String?
+  criadoEm    DateTime @default(now())
+
+  propostas Proposta[]
+}
+
+/// Liga um Profissional a uma Necessidade. É onde o match e os KPIs vivem.
+model Proposta {
+  id            String      @id @default(cuid())
+  necessidade   Necessidade @relation(fields: [necessidadeId], references: [id], onDelete: Cascade)
+  necessidadeId String
+  profissional  Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  profissionalId String
+
+  // SUGERIDO -> ENVIADA -> ACEITA -> EM_ANDAMENTO -> CONCLUIDA (ou RECUSADA/CANCELADA)
+  status        String @default("SUGERIDO")
+  valorCombinado Int?
+
+  // Marcos temporais — alimentam as métricas do go/no-go (CUI-26, CUI-29).
+  enviadaEm   DateTime? // quando a proposta foi apresentada à família (tempo até 1ª proposta)
+  aceitaEm    DateTime?
+  concluidaEm DateTime?
+
+  // Vazamento / desintermediação (CUI-31).
+  recorrente  Boolean @default(false)
+  vazou       Boolean @default(false)
+  vazouMotivo String?
+
+  observacoes String?
+  criadoEm    DateTime @default(now())
+
+  avaliacoes Avaliacao[]
+}
+
+/// Avaliação mútua após a conclusão.
+model Avaliacao {
+  id         String   @id @default(cuid())
+  proposta   Proposta @relation(fields: [propostaId], references: [id], onDelete: Cascade)
+  propostaId String
+  de         String // FAMILIA | PROFISSIONAL
+  nota       Int // 1..5
+  comentario String?
+  criadoEm   DateTime @default(now())
+}

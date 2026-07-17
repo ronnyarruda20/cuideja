@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CuidaJá — Painel do operador (Fatia 1)
 
-## Getting Started
+Ferramenta interna de concierge. **Não** é o app público — é onde você (operador)
+cadastra profissionais, registra necessidades das famílias, faz o match na mão e
+acompanha os números que decidem o go/no-go da Fase 0.
 
-First, run the development server:
+## O que ela faz
+
+- **Profissionais** — cadastro com categoria, especialidades, valores, e registro
+  da verificação manual de COREN (quem verificou e quando — CUI-12).
+- **Necessidades** — o que a família precisa (tarefas, não diagnóstico), local,
+  período, urgência, orçamento e como chegou até você.
+- **Match** — sugere profissionais compatíveis (mesma cidade primeiro), gera
+  propostas e acompanha o funil: sugerido → enviada → aceita → em andamento →
+  concluída.
+- **Painel** — fill rate, tempo até a 1ª proposta e taxa de vazamento (CUI-31),
+  calculados automaticamente a partir do que você registra.
+
+## Rodar localmente
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre em http://localhost:3000. A senha do operador está no arquivo `.env`
+(`APP_PASSWORD`). **Troque antes de usar de verdade.**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Segurança e dados (importante)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- O banco (`dev.db`) guarda **dados sensíveis** (COREN, telefone, tarefas de
+  cuidado). Ele está no `.gitignore` e **nunca** deve ir para o git nem para a
+  nuvem sem criptografia.
+- A ferramenta é protegida por uma senha única (a sua). Não é sistema de contas.
+- Não registre diagnóstico nem histórico médico — só tarefas (LGPD, CUI-10).
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+Next.js 16 · React 19 · Prisma 7 (SQLite via driver adapter) · Tailwind v4.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Quando a Fatia 2 (público + pagamento) chegar, a migração para Postgres/Supabase
+é direta — a modelagem já é a do produto final.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Comandos úteis
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev            # desenvolvimento
+npm run build          # build de produção
+npx prisma studio      # inspecionar o banco visualmente
+npx prisma migrate dev # aplicar mudanças no schema
+```

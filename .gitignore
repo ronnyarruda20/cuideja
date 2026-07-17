@@ -33,9 +33,17 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# banco local — contém dados sensíveis (CPF, COREN, saúde). NUNCA versionar.
+*.db
+*.db-journal
+prisma/*.db
+prisma/*.db-journal
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
