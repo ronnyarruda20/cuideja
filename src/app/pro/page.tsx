@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 // Landing do profissional. Mobile-first. O foco é a promessa que veio das
-// conversas: receber no dia (CUI-32), não "mais clientes".
+// conversas: receber assim que o plantão termina (CUI-32), não "mais clientes".
 export default function ProLanding() {
   return (
     <div className="flex flex-col gap-8">
       <div className="space-y-3 pt-4">
         <h1 className="text-3xl font-semibold leading-tight tracking-tight text-neutral-900">
-          Plantões com pagamento no dia.
+          Plantões com pagamento após o final do plantão.
         </h1>
         <p className="text-neutral-600">
           Cadastre seu perfil, tenha seu COREN verificado e receba oportunidades de plantão
@@ -17,7 +17,7 @@ export default function ProLanding() {
 
       <ul className="space-y-3 text-sm">
         {[
-          ["💰", "Receba no dia do plantão", "Sem esperar semanas pra cair na conta."],
+          ["💰", "Receba assim que o plantão terminar", "Sem esperar semanas pra cair na conta."],
           ["🛡️", "Perfil verificado", "Seu COREN confirmado vira um selo de confiança."],
           ["📍", "Oportunidades perto de você", "Só o que combina com sua cidade e disponibilidade."],
           ["🤝", "Sem pagar por lead", "Você nunca paga pra ver um contato. Só ganhamos quando você ganha."],
