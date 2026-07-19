@@ -109,4 +109,5 @@ export async function atualizarMeuPerfil(formData: FormData) {
   });
 
   revalidatePath("/pro/conta");
+  redirect("/pro/home");
 }
