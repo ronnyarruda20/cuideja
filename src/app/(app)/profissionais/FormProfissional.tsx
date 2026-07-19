@@ -50,7 +50,7 @@ export function FormProfissional({
           <Campo label="Disponibilidade" name="disponibilidade" defaultValue={p?.disponibilidade} placeholder="noites, fins de semana" />
         </div>
         <Campo
-          label="Especialidades"
+          label="Especialidades (o que você faz melhor)"
           name="especialidades"
           defaultValue={p?.especialidades}
           dica="Separe por vírgula: idoso, pediatria, curativos, pós-operatório…"
