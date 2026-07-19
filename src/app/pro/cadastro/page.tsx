@@ -91,6 +91,9 @@ export default function CadastroPro() {
           <label className={label}>
             Especialidades
             <input name="especialidades" className={input} placeholder="idoso, curativos, pós-operatório…" />
+            <span className="mt-1 block text-xs font-normal text-neutral-400">
+              Quando uma família procura cuidado, ela busca profissionais com experiência específica. Informar suas especialidades aumenta as chances de você ser sugerido para o trabalho ideal.
+            </span>
           </label>
           <label className={label}>
             Disponibilidade

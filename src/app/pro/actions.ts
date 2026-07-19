@@ -65,7 +65,7 @@ export async function cadastrar(
   }
 
   await abrirSessaoPro(profId);
-  redirect("/pro/conta?novo=1");
+  redirect("/pro/home?novo=1");
 }
 
 export async function entrar(
@@ -81,7 +81,7 @@ export async function entrar(
   }
 
   await abrirSessaoPro(p.id);
-  redirect("/pro/conta");
+  redirect("/pro/home");
 }
 
 export async function sairPro() {

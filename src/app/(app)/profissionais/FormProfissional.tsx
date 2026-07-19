@@ -31,6 +31,13 @@ export function FormProfissional({
   const p = profissional;
   return (
     <form action={action} className="space-y-6">
+      <Cartao className="space-y-2 bg-blue-50 border border-blue-200">
+        <h3 className="font-medium text-blue-900">Por que informar as especialidades?</h3>
+        <p className="text-sm text-blue-800">
+          Quando uma família procura cuidado, ela busca profissionais com experiência específica. Ao informar suas especialidades — como idoso, pediatria, curativos — você aumenta as chances de ser sugerido para o trabalho ideal.
+        </p>
+      </Cartao>
+
       <Cartao className="space-y-4">
         <h2 className="font-medium">Identificação</h2>
         <div className="grid gap-4 sm:grid-cols-2">
